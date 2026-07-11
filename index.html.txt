@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="css/style.css">
+  <title>Renovations Built on Trust</title>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">YourLogo</div>
+  <nav>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="services.html">Services</a></li>
+      <li><a href="portfolio.html">Portfolio</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+  <a class="cta-btn" href="contact.html">Request a Quote</a>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Renovations Built on Trust.</h1>
+    <h2>Serving Winnipeg & surrounding communities.</h2>
+    <a class="hero-btn" href="services.html">Explore Services</a>
+  </div>
+</section>
+
+<section class="services">
+  <h2>Our Services</h2>
+  <div class="services-grid">
+    <div class="service-card">Residential</div>
+    <div class="service-card">Commercial</div>
+    <div class="service-card">Municipal</div>
+  </div>
+</section>
+
+<section class="projects">
+  <h2>Featured Projects</h2>
+  <div class="masonry">
+    <div class="project-item">
+      <div class="before-after"></div>
+    </div>
+    <div class="project-item">
+      <div class="before-after"></div>
+    </div>
+    <div class="project-item">
+      <div class="before-after"></div>
+    </div>
+  </div>
+</section>
+
+<section class="why">
+  <h2>Why Choose Us</h2>
+  <div class="why-grid">
+    <div>Transparent Pricing</div>
+    <div>Skilled Trades</div>
+    <div>On Time Delivery</div>
+    <div>Warranty Included</div>
+  </div>
+</section>
+
+<section class="testimonials">
+  <h2>Testimonials</h2>
+  <div class="carousel">
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p>Great work, highly recommended.</p>
+    </div>
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p>Professional and reliable.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  © 2026 Your Company — All Rights Reserved
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
