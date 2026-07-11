@@ -107,6 +107,9 @@ export default function ServiceDetail() {
     )
   }
 
+  const galleryOverrides = JSON.parse(localStorage.getItem('admin_service_gallery_' + slug) || 'null')
+  const gallery = galleryOverrides || service.gallery
+
   return (
     <>
       <section className="page-hero">
@@ -132,7 +135,7 @@ export default function ServiceDetail() {
           <div className="service-gallery">
             <h3>Project Gallery</h3>
             <div className="gallery-grid">
-              {service.gallery.map((img, index) => (
+              {gallery.map((img, index) => (
                 <div className="gallery-item" key={index}>
                   <img src={img} alt={`${service.title} project ${index + 1}`} />
                 </div>

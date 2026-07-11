@@ -1,12 +1,19 @@
 import { Link } from 'react-router-dom'
+import { useAdmin } from '../contexts/AdminContext'
 
 export default function Footer() {
+  const { footer } = useAdmin()
+  const desc = footer.desc || 'Renovations Built on Trust. Serving Winnipeg and surrounding communities.'
+  const email = footer.email || 'info@debbsrenos.com'
+  const phone = footer.phone || '204-000-0000'
+  const address = footer.address || 'Winnipeg, Manitoba'
+  const copyright = footer.copyright || '© 2026 Debbs Renovations. All rights reserved.'
   return (
     <footer className="footer">
       <div className="footer-grid">
         <div className="footer-col">
           <h4>Debbs Renovations</h4>
-          <p>Renovations Built on Trust. Serving Winnipeg and surrounding communities.</p>
+          <p>{desc}</p>
         </div>
         <div className="footer-col">
           <h4>Quick Links</h4>
@@ -32,12 +39,12 @@ export default function Footer() {
         </div>
         <div className="footer-col">
           <h4>Contact</h4>
-          <p>Winnipeg, Manitoba</p>
-          <p>Email: info@debbsrenos.com</p>
-          <p>Phone: 204-000-0000</p>
+          <p>{address}</p>
+          <p>Email: {email}</p>
+          <p>Phone: {phone}</p>
         </div>
       </div>
-      <p className="copyright">© 2026 Debbs Renovations. All rights reserved.</p>
+      <p className="copyright">{copyright}</p>
     </footer>
   )
 }

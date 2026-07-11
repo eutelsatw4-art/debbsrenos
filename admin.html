@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | Debbs Renovations</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #eee;
+    }
+    .admin-nav {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .admin-nav button {
+      background: #1a1a1a;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .admin-nav button.active {
+      background: #f39c12;
+    }
+    .admin-section {
+      display: none;
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 2rem;
+    }
+    .admin-section.active {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: #1a1a1a;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .btn {
+      background: #f39c12;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-right: 1rem;
+    }
+    .btn-secondary {
+      background: #666;
+    }
+    .btn-success {
+      background: #16a34a;
+    }
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .image-item {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      border-radius: 4px;
+      text-align: center;
+    }
+    .image-item img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+    .image-item input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+    .status {
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .status.success {
+      background: #d4edda;
+      color: #155724;
+      display: block;
+    }
+    .status.error {
+      background: #f8d7da;
+      color: #721c24;
+      display: block;
+    }
+    .login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    .login-box {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-box h2 {
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <h2>Admin Login</h2>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="adminPassword" placeholder="Enter admin password">
+    </div>
+    <button class="btn" style="width: 100%;" onclick="login()">Login</button>
+    <p style="text-align: center; margin-top: 1rem; color: #666; font-size: 0.9rem;">Default: admin123</p>
+  </div>
+</div>
+
+<div class="admin-container" id="adminPanel" style="display: none;">
+
+  <div class="admin-header">
+    <div>
+      <h1>Website Admin</h1>
+      <p>Manage content, images, and site settings</p>
+    </div>
+    <div>
+      <button class="btn btn-success" onclick="exportContent()">Export Content</button>
+      <button class="btn btn-secondary" onclick="importContent()">Import Content</button>
+      <button class="btn btn-secondary" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div class="admin-nav">
+    <button class="active" onclick="showSection('hero')">Hero</button>
+    <button onclick="showSection('services')">Services</button>
+    <button onclick="showSection('footer')">Footer</button>
+    <button onclick="showSection('contact')">Contact</button>
+    <button onclick="showSection('images')">Images</button>
+    <button onclick="showSection('slider')">Slider</button>
+  </div>
+
+  <div id="section-hero" class="admin-section active">
+    <h2>Homepage Hero</h2>
+    <div class="form-group">
+      <label>Hero Title</label>
+      <input type="text" id="heroTitle" value="Renovations Built on Trust.">
+    </div>
+    <div class="form-group">
+      <label>Hero Subtitle</label>
+      <input type="text" id="heroSubtitle" value="Trusted residential, commercial and municipal renovation experts serving Winnipeg and surrounding communities since 2015.">
+    </div>
+    <div class="form-group">
+      <label>Hero Button Text</label>
+      <input type="text" id="heroBtnText" value="Explore Services">
+    </div>
+    <button class="btn" onclick="saveHero()">Save Hero Settings</button>
+  </div>
+
+  <div id="section-services" class="admin-section">
+    <h2>Services Configuration</h2>
+    <p>Edit service titles and descriptions. Use the format: Title|Description (one per line)</p>
+    <div class="form-group">
+      <label>Services List</label>
+      <textarea id="servicesList" rows="12">Residential|Kitchen remodels, bathroom upgrades, basement finishing, flooring, painting and full home renovations tailored to your lifestyle and budget.
+Commercial|Office build-outs, retail renovations, tenant improvements and commercial property upgrades with minimal disruption to your business.
+Municipal|Project management, subcontractor coordination, permit handling and on-site supervision for renovations of any size.
+Roofing & Siding|Roof repairs and replacements, vinyl and fibre cement siding installations, soffit, fascia and gutter upgrades.
+Decks & Outdoor Living|Custom deck design and construction, pergolas, fencing and backyard transformations for Manitoba summers.
+Masonry & Concrete|Foundation repairs, concrete patios, walkways, retaining walls and brickwork built to withstand Winnipeg's freeze-thaw cycles.
+Painting & Finishing|Interior and exterior painting, drywall finishing, texture work and color consultations for a flawless, lasting finish.
+Windows & Doors|Window replacements, door installations, and trim work to improve energy efficiency, security and curb appeal.</textarea>
+    </div>
+    <button class="btn" onclick="saveServices()">Save Services</button>
+  </div>
+
+  <div id="section-footer" class="admin-section">
+    <h2>Footer Content</h2>
+    <div class="form-group">
+      <label>Company Description</label>
+      <textarea id="footerDesc" rows="3">Renovations Built on Trust. Serving Winnipeg and surrounding communities.</textarea>
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="footerEmail" value="info@debbsrenos.com">
+    </div>
+    <div class="form-group">
+      <label>Phone</label>
+      <input type="text" id="footerPhone" value="204-000-0000">
+    </div>
+    <div class="form-group">
+      <label>Address</label>
+      <input type="text" id="footerAddress" value="Winnipeg, Manitoba">
+    </div>
+    <div class="form-group">
+      <label>Copyright Text</label>
+      <input type="text" id="footerCopyright" value="© 2026 Debbs Renovations. All rights reserved.">
+    </div>
+    <button class="btn" onclick="saveFooter()">Save Footer</button>
+  </div>
+
+  <div id="section-contact" class="admin-section">
+    <h2>Contact Information</h2>
+    <div class="form-group">
+      <label>Business Hours</label>
+      <input type="text" id="businessHours" value="Monday - Friday, 8am - 5pm">
+    </div>
+    <div class="form-group">
+      <label>Form Email (FormSubmit)</label>
+      <input type="email" id="formEmail" value="info@debbsrenos.com">
+    </div>
+    <div class="form-group">
+      <label>Contact Form Subject</label>
+      <input type="text" id="contactSubject" value="New Contact Form Submission">
+    </div>
+    <div class="form-group">
+      <label>Quote Form Subject</label>
+      <input type="text" id="quoteSubject" value="New Quote Request">
+    </div>
+    <button class="btn" onclick="saveContact()">Save Contact Settings</button>
+  </div>
+
+  <div id="section-images" class="admin-section">
+    <h2>Image Management</h2>
+    <p>Update image URLs. Changes apply to slider and galleries.</p>
+    <div class="form-group">
+      <label>Logo Path</label>
+      <input type="text" id="logoPath" value="images/logo.jpg.jpeg">
+    </div>
+    <div class="form-group">
+      <label>Slider Image 1 (Kitchen)</label>
+      <input type="text" class="slider-img" data-slide="0" value="https://images.unsplash.com/photo-1588854337221-4cf9fa96059c?w=1200&h=600&fit=crop">
+    </div>
+    <div class="form-group">
+      <label>Slider Image 2 (Bathroom)</label>
+      <input type="text" class="slider-img" data-slide="1" value="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=1200&h=600&fit=crop">
+    </div>
+    <div class="form-group">
+      <label>Slider Image 3 (Construction)</label>
+      <input type="text" class="slider-img" data-slide="2" value="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&h=600&fit=crop">
+    </div>
+    <div class="form-group">
+      <label>Slider Image 4 (Exterior)</label>
+      <input type="text" class="slider-img" data-slide="3" value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=600&fit=crop">
+    </div>
+    <div class="form-group">
+      <label>Slider Image 5 (Basement)</label>
+      <input type="text" class="slider-img" data-slide="4" value="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=1200&h=600&fit=crop">
+    </div>
+    <div class="form-group">
+      <label>Slider Image 6 (Siding)</label>
+      <input type="text" class="slider-img" data-slide="5" value="https://images.unsplash.com/photo-1562259929-b4e1edb0f5a7?w=1200&h=600&fit=crop">
+    </div>
+    <div class="form-group">
+      <label>Slider Image 7 (Commercial)</label>
+      <input type="text" class="slider-img" data-slide="6" value="https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&h=600&fit=crop">
+    </div>
+    <div class="form-group">
+      <label>Slider Image 8 (Concrete)</label>
+      <input type="text" class="slider-img" data-slide="7" value="https://images.unsplash.com/photo-1531834685032-c34bf0d84f77?w=1200&h=600&fit=crop">
+    </div>
+    <button class="btn" onclick="saveImages()">Save Images</button>
+  </div>
+
+  <div id="section-slider" class="admin-section">
+    <h2>Slider Content</h2>
+    <p>Edit slider titles and descriptions. Format: Title|Description</p>
+    <div class="form-group">
+      <label>Slide 1</label>
+      <input type="text" class="slide-content" data-slide="0" value="Modern Kitchen Renovation|West Winnipeg family home — full kitchen remodel with custom cabinetry and quartz countertops.">
+    </div>
+    <div class="form-group">
+      <label>Slide 2</label>
+      <input type="text" class="slide-content" data-slide="1" value="Luxury Bathroom Remodel|Tuxedo area residence — spa-inspired bathroom with heated floors and custom tile work.">
+    </div>
+    <div class="form-group">
+      <label>Slide 3</label>
+      <input type="text" class="slide-content" data-slide="2" value="New Home Construction|Custom single-family home build in South Winnipeg — from foundation to finish carpentry.">
+    </div>
+    <div class="form-group">
+      <label>Slide 4</label>
+      <input type="text" class="slide-content" data-slide="3" value="Exterior & Deck Project|Outdoor living space with composite decking, railings and integrated LED lighting in St. Vital.">
+    </div>
+    <div class="form-group">
+      <label>Slide 5</label>
+      <input type="text" class="slide-content" data-slide="4" value="Basement Development|Lower level suite with entertainment area, home gym and full bathroom in Charleswood.">
+    </div>
+    <div class="form-group">
+      <label>Slide 6</label>
+      <input type="text" class="slide-content" data-slide="5" value="Siding Replacement|Full vinyl siding upgrade in St. Boniface — improved insulation and fresh curb appeal.">
+    </div>
+    <div class="form-group">
+      <label>Slide 7</label>
+      <input type="text" class="slide-content" data-slide="6" value="Commercial Office Build-Out|Tenant improvement for a downtown Winnipeg office — new partitions, flooring and lighting.">
+    </div>
+    <div class="form-group">
+      <label>Slide 8</label>
+      <input type="text" class="slide-content" data-slide="7" value="Concrete Patio & Walkways|New stamped concrete patio and front walkway in Bridgwater Lakes, designed for Manitoba winters.">
+    </div>
+    <button class="btn" onclick="saveSliderContent()">Save Slider Content</button>
+  </div>
+
+</div>
+
+<script>
+const ADMIN_PASSWORD = 'admin123';
+let currentSection = 'hero';
+
+function login() {
+  const password = document.getElementById('adminPassword').value;
+  if (password === ADMIN_PASSWORD) {
+    document.getElementById('loginOverlay').classList.add('hidden');
+    document.getElementById('adminPanel').style.display = 'block';
+    loadContent();
+  } else {
+    alert('Invalid password');
+  }
+}
+
+function logout() {
+  document.getElementById('loginOverlay').classList.remove('hidden');
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('adminPassword').value = '';
+}
+
+function showSection(section) {
+  currentSection = section;
+  document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + section).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function showStatus(message, type) {
+  const status = document.getElementById('status');
+  status.textContent = message;
+  status.className = 'status ' + type;
+  setTimeout(() => { status.className = 'status'; }, 3000);
+}
+
+function saveHero() {
+  const data = {
+    heroTitle: document.getElementById('heroTitle').value,
+    heroSubtitle: document.getElementById('heroSubtitle').value,
+    heroBtnText: document.getElementById('heroBtnText').value
+  };
+  localStorage.setItem('admin_hero', JSON.stringify(data));
+  showStatus('Hero settings saved!', 'success');
+}
+
+function saveServices() {
+  const text = document.getElementById('servicesList').value;
+  localStorage.setItem('admin_services', text);
+  showStatus('Services saved!', 'success');
+}
+
+function saveFooter() {
+  const data = {
+    desc: document.getElementById('footerDesc').value,
+    email: document.getElementById('footerEmail').value,
+    phone: document.getElementById('footerPhone').value,
+    address: document.getElementById('footerAddress').value,
+    copyright: document.getElementById('footerCopyright').value
+  };
+  localStorage.setItem('admin_footer', JSON.stringify(data));
+  showStatus('Footer settings saved!', 'success');
+}
+
+function saveContact() {
+  const data = {
+    hours: document.getElementById('businessHours').value,
+    formEmail: document.getElementById('formEmail').value,
+    contactSubject: document.getElementById('contactSubject').value,
+    quoteSubject: document.getElementById('quoteSubject').value
+  };
+  localStorage.setItem('admin_contact', JSON.stringify(data));
+  showStatus('Contact settings saved!', 'success');
+}
+
+function saveImages() {
+  const sliderImages = [];
+  document.querySelectorAll('.slider-img').forEach(input => {
+    sliderImages.push(input.value);
+  });
+  localStorage.setItem('admin_slider_images', JSON.stringify(sliderImages));
+  localStorage.setItem('admin_logo', document.getElementById('logoPath').value);
+  showStatus('Images saved!', 'success');
+}
+
+function saveSliderContent() {
+  const slides = [];
+  document.querySelectorAll('.slide-content').forEach(input => {
+    const [title, desc] = input.value.split('|');
+    slides.push({ title: title.trim(), desc: desc.trim() });
+  });
+  localStorage.setItem('admin_slider_content', JSON.stringify(slides));
+  showStatus('Slider content saved!', 'success');
+}
+
+function loadContent() {
+  const hero = JSON.parse(localStorage.getItem('admin_hero') || '{}');
+  if (hero.heroTitle) document.getElementById('heroTitle').value = hero.heroTitle;
+  if (hero.heroSubtitle) document.getElementById('heroSubtitle').value = hero.heroSubtitle;
+  if (hero.heroBtnText) document.getElementById('heroBtnText').value = hero.heroBtnText;
+
+  const services = localStorage.getItem('admin_services');
+  if (services) document.getElementById('servicesList').value = services;
+
+  const footer = JSON.parse(localStorage.getItem('admin_footer') || '{}');
+  if (footer.desc) document.getElementById('footerDesc').value = footer.desc;
+  if (footer.email) document.getElementById('footerEmail').value = footer.email;
+  if (footer.phone) document.getElementById('footerPhone').value = footer.phone;
+  if (footer.address) document.getElementById('footerAddress').value = footer.address;
+  if (footer.copyright) document.getElementById('footerCopyright').value = footer.copyright;
+
+  const contact = JSON.parse(localStorage.getItem('admin_contact') || '{}');
+  if (contact.hours) document.getElementById('businessHours').value = contact.hours;
+  if (contact.formEmail) document.getElementById('formEmail').value = contact.formEmail;
+  if (contact.contactSubject) document.getElementById('contactSubject').value = contact.contactSubject;
+  if (contact.quoteSubject) document.getElementById('quoteSubject').value = contact.quoteSubject;
+
+  const logo = localStorage.getItem('admin_logo');
+  if (logo) document.getElementById('logoPath').value = logo;
+
+  const sliderImages = JSON.parse(localStorage.getItem('admin_slider_images') || '[]');
+  sliderImages.forEach((url, index) => {
+    const input = document.querySelector(`.slider-img[data-slide="${index}"]`);
+    if (input) input.value = url;
+  });
+
+  const sliderContent = JSON.parse(localStorage.getItem('admin_slider_content') || '[]');
+  sliderContent.forEach((slide, index) => {
+    const input = document.querySelector(`.slide-content[data-slide="${index}"]`);
+    if (input && slide.title) {
+      input.value = slide.title + '|' + slide.desc;
+    }
+  });
+}
+
+function exportContent() {
+  const data = {
+    hero: JSON.parse(localStorage.getItem('admin_hero') || '{}'),
+    services: localStorage.getItem('admin_services'),
+    footer: JSON.parse(localStorage.getItem('admin_footer') || '{}'),
+    contact: JSON.parse(localStorage.getItem('admin_contact') || '{}'),
+    logo: localStorage.getItem('admin_logo'),
+    sliderImages: JSON.parse(localStorage.getItem('admin_slider_images') || '[]'),
+    sliderContent: JSON.parse(localStorage.getItem('admin_slider_content') || '[]')
+  };
+  
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'website-content-backup.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showStatus('Content exported successfully!', 'success');
+}
+
+function importContent() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'application/json';
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = JSON.parse(event.target.result);
+        if (data.hero) localStorage.setItem('admin_hero', JSON.stringify(data.hero));
+        if (data.services) localStorage.setItem('admin_services', data.services);
+        if (data.footer) localStorage.setItem('admin_footer', JSON.stringify(data.footer));
+        if (data.contact) localStorage.setItem('admin_contact', JSON.stringify(data.contact));
+        if (data.logo) localStorage.setItem('admin_logo', data.logo);
+        if (data.sliderImages) localStorage.setItem('admin_slider_images', JSON.stringify(data.sliderImages));
+        if (data.sliderContent) localStorage.setItem('admin_slider_content', JSON.stringify(data.sliderContent));
+        loadContent();
+        showStatus('Content imported successfully!', 'success');
+      } catch (err) {
+        showStatus('Error importing file', 'error');
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+if (localStorage.getItem('admin_logged_in') === 'true') {
+  document.getElementById('loginOverlay').classList.add('hidden');
+  document.getElementById('adminPanel').style.display = 'block';
+  loadContent();
+}
+</script>
+
+</body>
+</html>

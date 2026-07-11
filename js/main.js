@@ -1,6 +1,102 @@
 (function() {
   'use strict';
 
+  function initAdminOverrides() {
+    const hero = JSON.parse(localStorage.getItem('admin_hero') || '{}');
+    if (hero.heroTitle) {
+      const h1 = document.querySelector('.hero-content h1');
+      if (h1) h1.textContent = hero.heroTitle;
+    }
+    if (hero.heroSubtitle) {
+      const h2 = document.querySelector('.hero-content h2');
+      if (h2) h2.textContent = hero.heroSubtitle;
+    }
+    if (hero.heroBtnText) {
+      const btn = document.querySelector('.hero-btn');
+      if (btn) btn.textContent = hero.heroBtnText;
+    }
+
+    const servicesText = localStorage.getItem('admin_services');
+    if (servicesText) {
+      const lines = servicesText.split('\n').filter(line => line.trim());
+      const servicesGrid = document.querySelector('.services-grid');
+      if (servicesGrid) {
+        servicesGrid.innerHTML = '';
+        lines.forEach(line => {
+          const [title, desc] = line.split('|');
+          const card = document.createElement('div');
+          card.className = 'service-card';
+          card.innerHTML = '<h3>' + (title || '').trim() + '</h3><p>' + (desc || '').trim() + '</p>';
+          servicesGrid.appendChild(card);
+        });
+      }
+    }
+
+    const footer = JSON.parse(localStorage.getItem('admin_footer') || '{}');
+    if (footer.desc) {
+      const descEl = document.querySelector('.footer-col h4');
+      if (descEl) {
+        const next = descEl.nextElementSibling;
+        if (next) next.textContent = footer.desc;
+      }
+    }
+    if (footer.email) {
+      document.querySelectorAll('.footer-col p').forEach(p => {
+        if (p.textContent.startsWith('Email:')) p.textContent = 'Email: ' + footer.email;
+      });
+    }
+    if (footer.phone) {
+      document.querySelectorAll('.footer-col p').forEach(p => {
+        if (p.textContent.startsWith('Phone:')) p.textContent = 'Phone: ' + footer.phone;
+      });
+    }
+    if (footer.address) {
+      document.querySelectorAll('.footer-col p').forEach(p => {
+        if (p.textContent.includes('Winnipeg')) p.textContent = footer.address;
+      });
+    }
+    if (footer.copyright) {
+      const copyrightEl = document.querySelector('.copyright');
+      if (copyrightEl) copyrightEl.textContent = footer.copyright;
+    }
+
+    const contact = JSON.parse(localStorage.getItem('admin_contact') || '{}');
+    if (contact.hours) {
+      document.querySelectorAll('.contact-info p').forEach(p => {
+        if (p.textContent.includes('Monday') || p.textContent.includes('Business Hours')) {
+          p.textContent = 'Business Hours: ' + contact.hours;
+        }
+      });
+    }
+
+    const logo = localStorage.getItem('admin_logo');
+    if (logo) {
+      const logoImg = document.querySelector('.logo img');
+      if (logoImg) logoImg.src = logo;
+    }
+
+    const sliderImages = JSON.parse(localStorage.getItem('admin_slider_images') || '[]');
+    if (sliderImages.length > 0) {
+      const slides = document.querySelectorAll('.slide img');
+      slides.forEach((img, i) => {
+        if (sliderImages[i]) img.src = sliderImages[i];
+      });
+    }
+
+    const sliderContent = JSON.parse(localStorage.getItem('admin_slider_content') || '[]');
+    if (sliderContent.length > 0) {
+      const slides = document.querySelectorAll('.slide');
+      slides.forEach((slide, i) => {
+        if (sliderContent[i]) {
+          const title = slide.querySelector('h3');
+          const desc = slide.querySelector('p');
+          if (title) title.textContent = sliderContent[i].title || '';
+          if (desc) desc.textContent = sliderContent[i].desc || '';
+        }
+      });
+    }
+  }
+
   function initSlider() {
     const slider = document.querySelector('.slider');
     if (!slider) return;
@@ -143,6 +239,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function() {
+    initAdminOverrides();
     initSlider();
     initFilters();
     initContactForms();
