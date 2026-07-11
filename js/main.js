@@ -119,9 +119,33 @@
     });
   }
 
+  function initImageFallbacks() {
+    const fallbackSrc = 'https://picsum.photos/1200/600';
+    document.querySelectorAll('img').forEach(function(img) {
+      let triedFallback = false;
+      img.addEventListener('error', function() {
+        if (!triedFallback) {
+          triedFallback = true;
+          img.src = fallbackSrc;
+          img.alt = 'Project image';
+        } else {
+          img.style.display = 'none';
+          const parent = img.parentElement;
+          if (parent) {
+            const fallback = document.createElement('div');
+            fallback.className = 'img-fallback';
+            fallback.textContent = img.alt || 'Image unavailable';
+            parent.insertBefore(fallback, img);
+          }
+        }
+      });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
     initSlider();
     initFilters();
     initContactForms();
+    initImageFallbacks();
   });
 })();

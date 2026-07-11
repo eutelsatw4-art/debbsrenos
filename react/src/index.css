@@ -31,6 +31,19 @@ button {
   font-family: inherit;
 }
 
+.img-fallback {
+  background: #e2e8f0;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  min-height: 220px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+
 .header {
   display: flex;
   justify-content: space-between;
