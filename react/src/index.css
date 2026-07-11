@@ -47,13 +47,18 @@ button {
 .header .logo {
   display: flex;
   align-items: center;
-  height: 80px;
+  height: auto;
+  max-height: 90px;
+  padding: 0.25rem 0;
 }
 
 .header .logo img {
-  height: 100%;
+  height: auto;
   width: auto;
-  max-height: 80px;
+  max-height: 90px;
+  max-width: 220px;
+  object-fit: contain;
+  display: block;
 }
 
 .header nav ul {
