@@ -5,7 +5,7 @@ export default function Header() {
   const { logo } = useAdmin()
   const location = useLocation()
   const isHome = location.pathname === '/'
-  const logoSrc = logo || (isHome ? '/images/logo.jpg.jpeg' : '../images/logo.jpg.jpeg')
+  const logoSrc = logo || '/logo.jpg.jpeg'
 
   return (
     <header className="header">
