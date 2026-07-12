@@ -25,6 +25,7 @@ export default function QuoteForm() {
         <textarea name="details" rows="6" placeholder="Please describe your project, preferred timeline and any budget considerations..." required />
         <input type="hidden" name="_subject" value="New Quote Request" />
         <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_next" value="/quote-thank-you" />
         <button className="cta-btn" type="submit">Submit Quote Request</button>
       </form>
     </section>

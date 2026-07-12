@@ -21,6 +21,7 @@ export default function Contact() {
             <textarea name="message" rows="5" placeholder="How can we help?" required />
             <input type="hidden" name="_subject" value={contactSubject} />
             <input type="hidden" name="_captcha" value="false" />
+            <input type="hidden" name="_next" value="/thank-you" />
             <button className="cta-btn" type="submit">Send Message</button>
           </form>
         </div>

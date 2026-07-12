@@ -7,6 +7,8 @@ import Contact from './pages/Contact'
 import ServiceDetail from './pages/ServiceDetail'
 import Admin from './pages/Admin'
 import FAQ from './pages/FAQ'
+import ThankYou from './pages/ThankYou'
+import QuoteThankYou from './pages/QuoteThankYou'
 import { AdminProvider } from './contexts/AdminContext'
 import { useEffect } from 'react'
 
@@ -33,6 +35,8 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/thank-you" element={<ThankYou />} />
+            <Route path="/quote-thank-you" element={<QuoteThankYou />} />
           </Routes>
         </main>
         <Footer />
