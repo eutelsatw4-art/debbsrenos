@@ -6,6 +6,7 @@ import Services from './pages/Services'
 import Contact from './pages/Contact'
 import ServiceDetail from './pages/ServiceDetail'
 import Admin from './pages/Admin'
+import FAQ from './pages/FAQ'
 import { AdminProvider } from './contexts/AdminContext'
 import { useEffect } from 'react'
 
@@ -30,6 +31,7 @@ function App() {
             <Route path="/services" element={<Services />} />
             <Route path="/services/:slug" element={<ServiceDetail />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/faq" element={<FAQ />} />
             <Route path="/admin" element={<Admin />} />
           </Routes>
         </main>

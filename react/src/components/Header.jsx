@@ -16,7 +16,8 @@ export default function Header() {
         <ul>
           <li><Link to="/">Home</Link></li>
           <li><Link to="/services">Services</Link></li>
-            <li><Link to={isHome ? '#portfolio' : '/#portfolio'}>Portfolio</Link></li>
+          <li><Link to={isHome ? '#portfolio' : '/#portfolio'}>Portfolio</Link></li>
+          <li><Link to="/faq">FAQ</Link></li>
           <li><Link to="/contact">Contact</Link></li>
         </ul>
       </nav>

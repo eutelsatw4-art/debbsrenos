@@ -238,11 +238,23 @@
     });
   }
 
+  function initHeroSlider() {
+    const slides = document.querySelectorAll('.hero-slide');
+    if (!slides.length) return;
+    let current = 0;
+    const total = slides.length;
+    setInterval(() => {
+      slides[current].classList.remove('active');
+      current = (current + 1) % total;
+      slides[current].classList.add('active');
+    }, 5000);
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
-    initAdminOverrides();
     initSlider();
     initFilters();
     initContactForms();
     initImageFallbacks();
+    initHeroSlider();
   });
 })();
