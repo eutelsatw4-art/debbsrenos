@@ -6,7 +6,7 @@ export default function Header() {
   const { logo } = useAdmin()
   const location = useLocation()
   const isHome = location.pathname === '/'
-  const logoSrc = logo || '/logo.jpg.jpeg'
+  const logoSrc = logo || '/logo.png'
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
