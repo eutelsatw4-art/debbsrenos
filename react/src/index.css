@@ -48,13 +48,96 @@ button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background: #fff;
-  color: #333;
+  padding: 1.2rem 2rem;
+  background: transparent;
+  color: #fff;
   position: sticky;
   top: 0;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: all 0.4s ease;
+}
+
+.header.scrolled {
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  padding: 0.7rem 2rem;
+  box-shadow: 0 4px 25px rgba(0,0,0,0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.header .logo {
+  display: flex;
+  align-items: center;
+  height: auto;
+  max-height: 90px;
+  padding: 0.25rem 0;
+  transition: all 0.4s ease;
+}
+
+.header.scrolled .logo {
+  max-height: 70px;
+}
+
+.header .logo img {
+  height: auto;
+  width: auto;
+  max-height: 90px;
+  max-width: 220px;
+  object-fit: contain;
+  display: block;
+  transition: all 0.4s ease;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.header.scrolled .logo img {
+  max-height: 70px;
+  filter: none;
+}
+
+.header nav ul {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.header nav a {
+  color: #fff;
+  font-weight: 500;
+  position: relative;
+  transition: color 0.3s ease;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.header.scrolled nav a {
+  color: #333;
+  text-shadow: none;
+}
+
+.header nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #f39c12;
+  transition: width 0.3s ease;
+}
+
+.header nav a:hover {
+  color: #f39c12;
+}
+
+.header.scrolled nav a:hover {
+  color: #f39c12;
+}
+
+.header nav a:hover::after {
+  width: 100%;
+}
+
+.admin-link {
+  display: none !important;
 }
 
 .header .logo {
