@@ -3,10 +3,10 @@ import { Link, useLocation } from 'react-router-dom'
 import { useState, useEffect, useRef } from 'react'
 
 export default function Header() {
-  const { logo } = useAdmin()
+  const { adminData } = useAdmin()
   const location = useLocation()
   const isHome = location.pathname === '/'
-  const logoSrc = logo || '/logo.png'
+  const logoSrc = adminData.logo || '/logo.png'
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {

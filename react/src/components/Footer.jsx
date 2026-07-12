@@ -2,12 +2,12 @@ import { Link } from 'react-router-dom'
 import { useAdmin } from '../contexts/AdminContext'
 
 export default function Footer() {
-  const { footer } = useAdmin()
-  const desc = footer.desc || 'Renovations Built on Trust. Serving Winnipeg and surrounding communities.'
-  const email = footer.email || 'info@debbsrenos.com'
-  const phone = footer.phone || '204-000-0000'
-  const address = footer.address || 'Winnipeg, Manitoba'
-  const copyright = footer.copyright || '© 2026 Debbs Renovations. All rights reserved.'
+  const { adminData } = useAdmin()
+  const desc = adminData.footer?.desc || 'Renovations Built on Trust. Serving Winnipeg and surrounding communities.'
+  const email = adminData.footer?.email || 'info@debbsrenos.com'
+  const phone = adminData.footer?.phone || '204-000-0000'
+  const address = adminData.footer?.address || 'Winnipeg, Manitoba'
+  const copyright = adminData.footer?.copyright || '© 2026 Debbs Renovations. All rights reserved.'
   return (
     <footer className="footer">
       <div className="footer-grid">

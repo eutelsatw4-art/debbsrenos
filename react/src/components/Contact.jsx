@@ -2,11 +2,12 @@ import { Link } from 'react-router-dom'
 import { useAdmin } from '../contexts/AdminContext'
 
 export default function Contact() {
-  const { contact } = useAdmin()
-  const hours = contact?.hours || 'Monday - Friday, 8am - 5pm'
-  const email = contact?.formEmail || 'info@debbsrenos.com'
-  const phone = contact?.phone || '204-000-0000'
-  const contactSubject = contact?.contactSubject || 'New Contact Form Submission'
+  const { adminData } = useAdmin()
+  const hours = adminData.contact?.hours || 'Monday - Friday, 8am - 5pm'
+  const email = adminData.contact?.formEmail || 'info@debbsrenos.com'
+  const phone = adminData.contact?.phone || '204-000-0000'
+  const address = adminData.contact?.address || 'Winnipeg, Manitoba'
+  const contactSubject = adminData.contact?.contactSubject || 'New Contact Form Submission'
 
   return (
     <section className="contact">
@@ -28,7 +29,7 @@ export default function Contact() {
 
         <div className="contact-info">
           <h3>Our Office</h3>
-          <p>Winnipeg, Manitoba</p>
+          <p>{address}</p>
           <p>Email: {email}</p>
           <p>Phone: {phone}</p>
           <p>Business Hours: {hours}</p>

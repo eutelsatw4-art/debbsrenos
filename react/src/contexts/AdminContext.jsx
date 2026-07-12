@@ -10,7 +10,10 @@ export function AdminProvider({ children }) {
     contact: {},
     logo: null,
     sliderImages: [],
-    sliderContent: []
+    sliderContent: [],
+    testimonials: [],
+    faqs: [],
+    portfolio: null
   })
 
   useEffect(() => {
@@ -21,6 +24,9 @@ export function AdminProvider({ children }) {
     const logo = localStorage.getItem('admin_logo')
     const sliderImages = JSON.parse(localStorage.getItem('admin_slider_images') || '[]')
     const sliderContent = JSON.parse(localStorage.getItem('admin_slider_content') || '[]')
+    const testimonials = JSON.parse(localStorage.getItem('admin_testimonials') || '[]')
+    const faqs = JSON.parse(localStorage.getItem('admin_faqs') || '[]')
+    const portfolio = localStorage.getItem('admin_portfolio')
 
     setAdminData({
       hero,
@@ -29,12 +35,15 @@ export function AdminProvider({ children }) {
       contact,
       logo,
       sliderImages,
-      sliderContent
+      sliderContent,
+      testimonials,
+      faqs,
+      portfolio
     })
   }, [])
 
   return (
-    <AdminContext.Provider value={adminData}>
+    <AdminContext.Provider value={{ adminData, setAdminData }}>
       {children}
     </AdminContext.Provider>
   )
@@ -44,13 +53,8 @@ export function useAdmin() {
   const context = useContext(AdminContext)
   if (!context) {
     return {
-      hero: {},
-      services: null,
-      footer: {},
-      contact: {},
-      logo: null,
-      sliderImages: [],
-      sliderContent: []
+      adminData: { hero: {}, services: null, footer: {}, contact: {}, logo: null, sliderImages: [], sliderContent: [], testimonials: [], faqs: [], portfolio: null },
+      setAdminData: () => {}
     }
   }
   return context

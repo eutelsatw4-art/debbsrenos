@@ -54,13 +54,13 @@ const defaultSlides = [
 
 export default function Slider() {
   const [current, setCurrent] = useState(0)
-  const { sliderImages, sliderContent } = useAdmin()
+  const { adminData } = useAdmin()
 
   const slides = defaultSlides.map((slide, index) => {
-    const adminSlide = sliderContent[index]
+    const adminSlide = adminData.sliderContent[index]
     return {
       ...slide,
-      src: sliderImages[index] || slide.src,
+      src: adminData.sliderImages[index] || slide.src,
       title: adminSlide?.title || slide.title,
       desc: adminSlide?.desc || slide.desc
     }

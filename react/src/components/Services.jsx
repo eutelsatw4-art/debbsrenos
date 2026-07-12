@@ -13,11 +13,11 @@ const defaultServices = [
 ]
 
 export default function Services() {
-  const { services: adminServices } = useAdmin()
+  const { adminData } = useAdmin()
   
   let services = defaultServices
-  if (adminServices) {
-    const lines = adminServices.split('\n').filter(line => line.trim())
+  if (adminData.services) {
+    const lines = adminData.services.split('\n').filter(line => line.trim())
     services = lines.map((line, index) => {
       const [title, desc] = line.split('|')
       return {

@@ -1,26 +1,60 @@
 import { useState, useEffect } from 'react'
 import { useAdmin } from '../contexts/AdminContext'
 
-const ADMIN_PASSWORD = 'admin123'
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin123'
+
+const defaultSliderImages = [
+  'images/kitchen.jpg',
+  'images/bathroom.jpg',
+  'images/construction.jpg',
+  'images/exterior.jpg',
+  'images/basement.jpg',
+  'images/home-exterior.jpg',
+  'images/commercial.jpg',
+  'images/construction.jpg'
+]
+
+const defaultSliderContent = [
+  { title: 'Modern Kitchen Renovation', desc: 'West Winnipeg family home — full kitchen remodel with custom cabinetry and quartz countertops.' },
+  { title: 'Luxury Bathroom Remodel', desc: 'Tuxedo area residence — spa-inspired bathroom with heated floors and custom tile work.' },
+  { title: 'New Home Construction', desc: 'Custom single-family home build in South Winnipeg — from foundation to finish carpentry.' },
+  { title: 'Exterior & Deck Project', desc: 'Outdoor living space with composite decking, railings and integrated LED lighting in St. Vital.' },
+  { title: 'Basement Development', desc: 'Lower level suite with entertainment area, home gym and full bathroom in Charleswood.' },
+  { title: 'Siding Replacement', desc: 'Full vinyl siding upgrade in St. Boniface — improved insulation and fresh curb appeal.' },
+  { title: 'Commercial Office Build-Out', desc: 'Tenant improvement for a downtown Winnipeg office — new partitions, flooring and lighting.' },
+  { title: 'Concrete Patio & Walkways', desc: 'New stamped concrete patio and front walkway in Bridgwater Lakes, designed for Manitoba winters.' }
+]
+
+const defaultTestimonials = [
+  { quote: 'Debbs Renovations transformed our kitchen. Professional, on budget and ahead of schedule. Highly recommend.', client: 'Sarah M., Winnipeg' },
+  { quote: 'They handled our basement development from start to finish. Great communication and quality workmanship.', client: 'James K., St. Vital' },
+  { quote: 'Our commercial tenant improvement was completed with minimal disruption. True general contracting professionals.', client: 'Linda R., Osborne Village' }
+]
 
 export default function Admin() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [showPassword, setShowPassword] = useState(true)
   const [password, setPassword] = useState('')
-  const { adminData, setAdminData } = useAdmin()
   const [status, setStatus] = useState('')
+  const [activeSection, setActiveSection] = useState('hero')
+  const { adminData, setAdminData } = useAdmin()
+
+  const hero = adminData.hero || {}
+  const footer = adminData.footer || {}
+  const contact = adminData.contact || {}
+  const sliderImages = adminData.sliderImages || defaultSliderImages
+  const sliderContent = adminData.sliderContent || defaultSliderContent
+  const testimonials = adminData.testimonials || defaultTestimonials
+  const servicesText = adminData.services || defaultServicesText()
 
   useEffect(() => {
     if (localStorage.getItem('admin_logged_in') === 'true') {
       setIsLoggedIn(true)
-      setShowPassword(false)
     }
   }, [])
 
   const login = () => {
     if (password === ADMIN_PASSWORD) {
       setIsLoggedIn(true)
-      setShowPassword(false)
       localStorage.setItem('admin_logged_in', 'true')
     } else {
       setStatus('Invalid password')
@@ -29,15 +63,17 @@ export default function Admin() {
 
   const logout = () => {
     setIsLoggedIn(false)
-    setShowPassword(true)
     setPassword('')
     localStorage.removeItem('admin_logged_in')
   }
 
-  const saveField = (key, value) => {
-    localStorage.setItem('admin_' + key, value)
-    setStatus('Saved!')
-    setTimeout(() => setStatus(''), 2000)
+  const updateAdminData = (key, value) => {
+    setAdminData({ ...adminData, [key]: value })
+  }
+
+  const showStatus = (message, type) => {
+    setStatus(message)
+    setTimeout(() => setStatus(''), 3000)
   }
 
   if (!isLoggedIn) {
@@ -53,6 +89,7 @@ export default function Admin() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && login()}
             placeholder="Enter admin password"
             style={{ width: '100%', padding: '0.75rem', border: '1px solid #ccc', borderRadius: '4px', marginBottom: '1rem' }}
           />
@@ -74,7 +111,7 @@ export default function Admin() {
           <p>Manage content, images, and site settings</p>
         </div>
         <div>
-          <button className="btn btn-success" onClick={() => { exportContent(); setStatus('Exported!'); setTimeout(() => setStatus(''), 2000); }}>Export Content</button>
+          <button className="btn btn-success" onClick={() => { exportContent(); showStatus('Exported!', 'success'); }}>Export Content</button>
           <button className="btn btn-secondary" onClick={importContent}>Import Content</button>
           <button className="btn btn-secondary" onClick={logout}>Logout</button>
         </div>
@@ -83,69 +120,275 @@ export default function Admin() {
       {status && <div className="status success">{status}</div>}
 
       <div className="admin-nav">
-        <button className="active">Content Editor</button>
-        <span style={{ marginLeft: 'auto', color: '#666' }}>Changes save automatically to browser storage</span>
+        <button className={activeSection === 'hero' ? 'active' : ''} onClick={() => setActiveSection('hero')}>Hero</button>
+        <button className={activeSection === 'slider' ? 'active' : ''} onClick={() => setActiveSection('slider')}>Slider Images</button>
+        <button className={activeSection === 'slider-content' ? 'active' : ''} onClick={() => setActiveSection('slider-content')}>Slider Content</button>
+        <button className={activeSection === 'services' ? 'active' : ''} onClick={() => setActiveSection('services')}>Services</button>
+        <button className={activeSection === 'portfolio' ? 'active' : ''} onClick={() => setActiveSection('portfolio')}>Portfolio</button>
+        <button className={activeSection === 'testimonials' ? 'active' : ''} onClick={() => setActiveSection('testimonials')}>Testimonials</button>
+        <button className={activeSection === 'faqs' ? 'active' : ''} onClick={() => setActiveSection('faqs')}>FAQs</button>
+        <button className={activeSection === 'footer' ? 'active' : ''} onClick={() => setActiveSection('footer')}>Footer</button>
+        <button className={activeSection === 'contact' ? 'active' : ''} onClick={() => setActiveSection('contact')}>Contact</button>
       </div>
 
-      <div className="admin-section active">
-        <h2>Site Content</h2>
-        <div className="form-row">
-          <div className="form-group">
-            <label>Hero Title</label>
-            <input value={adminData.hero?.heroTitle || 'Renovations Built on Trust.'} onChange={(e) => {
-              const newHero = { ...adminData.hero, heroTitle: e.target.value }
-              localStorage.setItem('admin_hero', JSON.stringify(newHero))
-              setAdminData({ ...adminData, hero: newHero })
-            }} />
+      {activeSection === 'hero' && (
+        <div className="admin-section active">
+          <h2>Homepage Hero</h2>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Hero Title</label>
+              <input value={hero.heroTitle || 'Renovations Built on Trust.'} onChange={(e) => {
+                updateAdminData('hero', { ...hero, heroTitle: e.target.value })
+              }} />
+            </div>
+            <div className="form-group">
+              <label>Hero Button Text</label>
+              <input value={hero.heroBtnText || 'Explore Services'} onChange={(e) => {
+                updateAdminData('hero', { ...hero, heroBtnText: e.target.value })
+              }} />
+            </div>
           </div>
           <div className="form-group">
             <label>Hero Subtitle</label>
-            <input value={adminData.hero?.heroSubtitle || ''} onChange={(e) => {
-              const newHero = { ...adminData.hero, heroSubtitle: e.target.value }
-              localStorage.setItem('admin_hero', JSON.stringify(newHero))
-              setAdminData({ ...adminData, hero: newHero })
+            <input value={hero.heroSubtitle || ''} onChange={(e) => {
+              updateAdminData('hero', { ...hero, heroSubtitle: e.target.value })
             }} />
           </div>
+          <button className="btn" onClick={() => showStatus('Hero saved!', 'success')}>Save Hero</button>
         </div>
+      )}
 
-        <div className="form-group">
-          <label>Services (Title|Description per line)</label>
-          <textarea rows="10" value={adminData.services || ''} onChange={(e) => {
-            localStorage.setItem('admin_services', e.target.value)
-            setAdminData({ ...adminData, services: e.target.value })
-          }} />
+      {activeSection === 'slider' && (
+        <div className="admin-section active">
+          <h2>Slider Images</h2>
+          <p style={{ marginBottom: '1rem', color: '#666' }}>Enter image paths for each slide. Use absolute paths or URLs.</p>
+          {sliderImages.map((src, i) => (
+            <div className="form-group" key={i}>
+              <label>Slide {i + 1} Image Path</label>
+              <input value={src} onChange={(e) => {
+                const newImages = [...sliderImages]
+                newImages[i] = e.target.value
+                localStorage.setItem('admin_slider_images', JSON.stringify(newImages))
+                updateAdminData('sliderImages', newImages)
+              }} />
+            </div>
+          ))}
+          <button className="btn" onClick={() => showStatus('Slider images saved!', 'success')}>Save Images</button>
         </div>
+      )}
 
-        <div className="form-row">
+      {activeSection === 'slider-content' && (
+        <div className="admin-section active">
+          <h2>Slider Content</h2>
+          <p style={{ marginBottom: '1rem', color: '#666' }}>Edit titles and descriptions for each slide.</p>
+          {sliderContent.map((slide, i) => (
+            <div className="form-group" key={i}>
+              <label>Slide {i + 1} Title|Description</label>
+              <input value={`${slide.title}|${slide.desc}`} onChange={(e) => {
+                const parts = e.target.value.split('|')
+                const newContent = [...sliderContent]
+                newContent[i] = { title: parts[0]?.trim() || '', desc: parts[1]?.trim() || '' }
+                localStorage.setItem('admin_slider_content', JSON.stringify(newContent))
+                updateAdminData('sliderContent', newContent)
+              }} />
+            </div>
+          ))}
+          <button className="btn" onClick={() => showStatus('Slider content saved!', 'success')}>Save Slider Content</button>
+        </div>
+      )}
+
+      {activeSection === 'services' && (
+        <div className="admin-section active">
+          <h2>Services Widget Content</h2>
+          <p style={{ marginBottom: '1rem', color: '#666' }}>Edit service titles and descriptions. Use format: Title|Description (one per line)</p>
           <div className="form-group">
-            <label>Footer Email</label>
-            <input value={adminData.footer?.email || 'info@debbsrenos.com'} onChange={(e) => {
-              const newFooter = { ...adminData.footer, email: e.target.value }
-              localStorage.setItem('admin_footer', JSON.stringify(newFooter))
-              setAdminData({ ...adminData, footer: newFooter })
+            <label>Services List</label>
+            <textarea rows="12" value={servicesText} onChange={(e) => {
+              localStorage.setItem('admin_services', e.target.value)
+              updateAdminData('services', e.target.value)
+            }} />
+          </div>
+          <button className="btn" onClick={() => showStatus('Services saved!', 'success')}>Save Services</button>
+        </div>
+      )}
+
+      {activeSection === 'portfolio' && (
+        <div className="admin-section active">
+          <h2>Portfolio Section</h2>
+          <p style={{ marginBottom: '1rem', color: '#666' }}>Edit the portfolio items shown on the home page. Use format: ImagePath|Title|Description</p>
+          <div className="form-group">
+            <label>Portfolio Items</label>
+            <textarea rows="10" value={adminData.portfolio || defaultPortfolioText()} onChange={(e) => {
+              localStorage.setItem('admin_portfolio', e.target.value)
+              updateAdminData('portfolio', e.target.value)
+            }} />
+          </div>
+          <button className="btn" onClick={() => showStatus('Portfolio saved!', 'success')}>Save Portfolio</button>
+        </div>
+      )}
+
+      {activeSection === 'testimonials' && (
+        <div className="admin-section active">
+          <h2>Testimonials</h2>
+          <p style={{ marginBottom: '1rem', color: '#666' }}>Edit testimonial quotes and client names.</p>
+          {testimonials.map((t, i) => (
+            <div key={i} style={{ marginBottom: '1.5rem', padding: '1rem', background: '#f8f9fa', borderRadius: '8px' }}>
+              <div className="form-group">
+                <label>Testimonial {i + 1} Quote</label>
+                <textarea rows="3" value={t.quote} onChange={(e) => {
+                  const newTestimonials = [...testimonials]
+                  newTestimonials[i] = { ...newTestimonials[i], quote: e.target.value }
+                  localStorage.setItem('admin_testimonials', JSON.stringify(newTestimonials))
+                  updateAdminData('testimonials', newTestimonials)
+                }} />
+              </div>
+              <div className="form-group">
+                <label>Client Name & Location</label>
+                <input value={t.client} onChange={(e) => {
+                  const newTestimonials = [...testimonials]
+                  newTestimonials[i] = { ...newTestimonials[i], client: e.target.value }
+                  localStorage.setItem('admin_testimonials', JSON.stringify(newTestimonials))
+                  updateAdminData('testimonials', newTestimonials)
+                }} />
+              </div>
+            </div>
+          ))}
+          <button className="btn" onClick={() => showStatus('Testimonials saved!', 'success')}>Save Testimonials</button>
+        </div>
+      )}
+
+      {activeSection === 'faqs' && (
+        <div className="admin-section active">
+          <h2>FAQ Content</h2>
+          <p style={{ marginBottom: '1rem', color: '#666' }}>Edit frequently asked questions. Use format: Question|Answer (one per line)</p>
+          <div className="form-group">
+            <label>FAQs List</label>
+            <textarea rows="16" value={adminData.faqsText || defaultFaqsText()} onChange={(e) => {
+              localStorage.setItem('admin_faqs', e.target.value)
+              updateAdminData('faqsText', e.target.value)
+            }} />
+          </div>
+          <button className="btn" onClick={() => showStatus('FAQs saved!', 'success')}>Save FAQs</button>
+        </div>
+      )}
+
+      {activeSection === 'footer' && (
+        <div className="admin-section active">
+          <h2>Footer Content</h2>
+          <div className="form-group">
+            <label>Company Description</label>
+            <textarea rows="3" value={footer.desc || ''} onChange={(e) => {
+              updateAdminData('footer', { ...footer, desc: e.target.value })
+            }} />
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label>Email</label>
+              <input value={footer.email || 'info@debbsrenos.com'} onChange={(e) => {
+                updateAdminData('footer', { ...footer, email: e.target.value })
+              }} />
+            </div>
+            <div className="form-group">
+              <label>Phone</label>
+              <input value={footer.phone || '204-000-0000'} onChange={(e) => {
+                updateAdminData('footer', { ...footer, phone: e.target.value })
+              }} />
+            </div>
+          </div>
+          <div className="form-group">
+            <label>Address</label>
+            <input value={footer.address || 'Winnipeg, Manitoba'} onChange={(e) => {
+              updateAdminData('footer', { ...footer, address: e.target.value })
             }} />
           </div>
           <div className="form-group">
-            <label>Footer Phone</label>
-            <input value={adminData.footer?.phone || '204-000-0000'} onChange={(e) => {
-              const newFooter = { ...adminData.footer, phone: e.target.value }
-              localStorage.setItem('admin_footer', JSON.stringify(newFooter))
-              setAdminData({ ...adminData, footer: newFooter })
+            <label>Copyright Text</label>
+            <input value={footer.copyright || '© 2026 Debbs Renovations. All rights reserved.'} onChange={(e) => {
+              updateAdminData('footer', { ...footer, copyright: e.target.value })
             }} />
           </div>
+          <button className="btn" onClick={() => showStatus('Footer saved!', 'success')}>Save Footer</button>
         </div>
+      )}
 
-        <div className="form-group">
-          <label>Copyright Text</label>
-          <input value={adminData.footer?.copyright || '© 2026 Debbs Renovations. All rights reserved.'} onChange={(e) => {
-            const newFooter = { ...adminData.footer, copyright: e.target.value }
-            localStorage.setItem('admin_footer', JSON.stringify(newFooter))
-            setAdminData({ ...adminData, footer: newFooter })
-          }} />
+      {activeSection === 'contact' && (
+        <div className="admin-section active">
+          <h2>Contact Information</h2>
+          <div className="form-group">
+            <label>Business Hours</label>
+            <input value={contact.hours || 'Monday - Friday, 8am - 5pm'} onChange={(e) => {
+              updateAdminData('contact', { ...contact, hours: e.target.value })
+            }} />
+          </div>
+          <div className="form-group">
+            <label>Contact Form Email (FormSubmit)</label>
+            <input value={contact.formEmail || 'info@debbsrenos.com'} onChange={(e) => {
+              updateAdminData('contact', { ...contact, formEmail: e.target.value })
+            }} />
+          </div>
+          <div className="form-group">
+            <label>Contact Form Subject</label>
+            <input value={contact.contactSubject || 'New Contact Form Submission'} onChange={(e) => {
+              updateAdminData('contact', { ...contact, contactSubject: e.target.value })
+            }} />
+          </div>
+          <div className="form-group">
+            <label>Quote Form Subject</label>
+            <input value={contact.quoteSubject || 'New Quote Request'} onChange={(e) => {
+              updateAdminData('contact', { ...contact, quoteSubject: e.target.value })
+            }} />
+          </div>
+          <div className="form-group">
+            <label>Office Address</label>
+            <input value={contact.address || 'Winnipeg, Manitoba'} onChange={(e) => {
+              updateAdminData('contact', { ...contact, address: e.target.value })
+            }} />
+          </div>
+          <button className="btn" onClick={() => showStatus('Contact saved!', 'success')}>Save Contact</button>
         </div>
-      </div>
+      )}
     </div>
   )
+}
+
+function defaultServicesText() {
+  return [
+    'Residential|Kitchen remodels, bathroom upgrades, basement finishing, flooring, painting and full home renovations tailored to your lifestyle and budget.',
+    'Commercial|Office build-outs, retail renovations, tenant improvements and commercial property upgrades with minimal disruption to your business.',
+    'Municipal|Project management, subcontractor coordination, permit handling and on-site supervision for renovations of any size.',
+    'Roofing & Siding|Roof repairs and replacements, vinyl and fibre cement siding installations, soffit, fascia and gutter upgrades.',
+    'Decks & Outdoor Living|Custom deck design and construction, pergolas, fencing and backyard transformations for Manitoba summers.',
+    'Masonry & Concrete|Foundation repairs, concrete patios, walkways, retaining walls and brickwork built to withstand Winnipeg\'s freeze-thaw cycles.',
+    'Painting & Finishing|Interior and exterior painting, drywall finishing, texture work and color consultations for a flawless, lasting finish.',
+    'Windows & Doors|Window replacements, door installations, and trim work to improve energy efficiency, security and curb appeal.'
+  ].join('\n')
+}
+
+function defaultPortfolioText() {
+  return [
+    '/kitchen.jpg|Modern Kitchen Renovation|Custom cabinetry, quartz countertops and full remodel in West Winnipeg.',
+    '/bathroom.jpg|Luxury Bathroom Remodel|Spa-inspired bathroom with heated floors and custom tile work in Tuxedo.',
+    '/construction.jpg|New Home Construction|Full single-family home build from foundation to finish in South Winnipeg.',
+    '/exterior.jpg|Exterior & Deck Project|Composite decking, railings and outdoor living space in St. Vital.',
+    '/basement.jpg|Basement Development|Lower level suite with entertainment area, home gym and bathroom in Charleswood.',
+    '/home-exterior.jpg|Siding Replacement|Full vinyl siding upgrade with improved insulation in St. Boniface.',
+    '/commercial.jpg|Commercial Office Build-Out|Downtown Winnipeg tenant improvement with new partitions and lighting.',
+    '/deck.jpg|Custom Deck Build|Outdoor deck and backyard expansion built for Manitoba weather.'
+  ].join('\n')
+}
+
+function defaultFaqsText() {
+  const defaultFaqs = [
+    { question: 'What areas do you serve?', answer: 'We serve Winnipeg and surrounding communities including St. Vital, Charleswood, Tuxedo, West Winnipeg, South Winnipeg, St. Boniface, Osborne Village, and Bridgwater Lakes.' },
+    { question: 'Are you licensed and insured?', answer: 'Yes, Debbs Renovations is fully licensed, insured, and compliant with Manitoba building codes. We carry comprehensive liability insurance for every project.' },
+    { question: 'Do you provide free estimates?', answer: 'Yes, we offer free, no-obligation consultations and estimates. Contact us to schedule a site visit and receive a detailed, itemized quote.' },
+    { question: 'How long does a typical renovation take?', answer: 'Timelines vary by project. A kitchen remodel typically takes 4-6 weeks, a bathroom renovation 2-3 weeks, and larger projects like basement developments or whole-home renovations may take 2-4 months. We provide a detailed schedule during the planning phase.' },
+    { question: 'Do you help with permits and inspections?', answer: 'Yes, we handle all permit applications and coordinate municipal inspections as part of our full-service contracting process.' },
+    { question: 'What payment terms do you offer?', answer: 'We use transparent, milestone-based billing. You will receive itemized invoices at key project stages. Payment schedules are discussed and agreed upon before work begins.' },
+    { question: 'Is there a warranty on your work?', answer: 'Yes, we provide a workmanship warranty on every project for your peace of mind. Specific warranty terms depend on the type of work and materials used, and will be outlined in your contract.' },
+    { question: 'Can I make changes during the project?', answer: 'Yes. We understand that plans can evolve. We have a simple change-order process to review adjustments, update timelines, and confirm pricing before proceeding.' }
+  ]
+  return defaultFaqs.map(f => `${f.question}|${f.answer}`).join('\n')
 }
 
 function exportContent() {
@@ -156,7 +399,10 @@ function exportContent() {
     contact: JSON.parse(localStorage.getItem('admin_contact') || '{}'),
     logo: localStorage.getItem('admin_logo'),
     sliderImages: JSON.parse(localStorage.getItem('admin_slider_images') || '[]'),
-    sliderContent: JSON.parse(localStorage.getItem('admin_slider_content') || '[]')
+    sliderContent: JSON.parse(localStorage.getItem('admin_slider_content') || '[]'),
+    testimonials: JSON.parse(localStorage.getItem('admin_testimonials') || '[]'),
+    portfolio: localStorage.getItem('admin_portfolio'),
+    faqs: localStorage.getItem('admin_faqs')
   }
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
