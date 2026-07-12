@@ -193,12 +193,12 @@
   <div class="status" id="status"></div>
 
   <div class="admin-nav">
-    <button class="active" onclick="showSection('hero')">Hero</button>
-    <button onclick="showSection('services')">Services</button>
-    <button onclick="showSection('footer')">Footer</button>
-    <button onclick="showSection('contact')">Contact</button>
-    <button onclick="showSection('images')">Images</button>
-    <button onclick="showSection('slider')">Slider</button>
+    <button class="active" onclick="showSection('hero', this)">Hero</button>
+    <button onclick="showSection('services', this)">Services</button>
+    <button onclick="showSection('footer', this)">Footer</button>
+    <button onclick="showSection('contact', this)">Contact</button>
+    <button onclick="showSection('images', this)">Images</button>
+    <button onclick="showSection('slider', this)">Slider</button>
   </div>
 
   <div id="section-hero" class="admin-section active">
@@ -384,12 +384,12 @@ function logout() {
   document.getElementById('adminPassword').value = '';
 }
 
-function showSection(section) {
+function showSection(section, btn) {
   currentSection = section;
   document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.admin-nav button').forEach(b => b.classList.remove('active'));
   document.getElementById('section-' + section).classList.add('active');
-  event.target.classList.add('active');
+  if (btn) btn.classList.add('active');
 }
 
 function showStatus(message, type) {
